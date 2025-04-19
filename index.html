@@ -110,6 +110,8 @@
 <body>
   <div class="container">
     <h1>Gerador de Outfit</h1>
+
+    <div>
       <input type="text" id="nameInput" placeholder="Nome da peça" />
       <input type="text" id="imageInput" placeholder="URL da imagem" />
       <select id="typeInput">
@@ -245,7 +247,7 @@
       const ws = XLSX.utils.json_to_sheet(clothes);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Peças');
-      XLSX.writeFile(wb, 'clothes.xlsx');
+      XLSX.writeFile(wb, 'outfit_gerador.xlsx');
     };
 
     // Renderizar as peças ao carregar
