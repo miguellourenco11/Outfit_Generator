@@ -113,7 +113,10 @@
 <body>
   <div class="container">
     <h1>Gerador de Outfit</h1>
-    
+
+    <!-- Botão Exportar para Excel Moved Above -->
+    <button onclick="exportToExcel()">Exportar para Excel</button>
+
     <div>
       <input type="text" id="linkInput" placeholder="Cole o link do produto" />
       <button onclick="autofillFromLink()">Preencher dados do link</button>
@@ -159,13 +162,12 @@
         <option value="streetwear">Streetwear</option>
         <option value="formal">Formal</option>
         <option value="casual">Casual</option>
+        <option value="surpresa">Surpresa</option> <!-- Estilo surpresa ao sugerir outfit -->
       </select>
     </div>
 
     <div>
       <button onclick="generateOutfit()">Sugerir Outfit</button>
-      <div style="margin-top: 20px;"></div> <!-- Mais espaço entre os botões -->
-      <button onclick="exportToExcel()">Exportar para Excel</button>
     </div>
 
     <h2>Outfit Sugerido</h2>
@@ -196,7 +198,7 @@
       if (document.getElementById("styleStreet").checked) styles.push('streetwear');
       if (document.getElementById("styleFormal").checked) styles.push('formal');
       if (document.getElementById("styleCasual").checked) styles.push('casual');
-      
+
       if (name && image && type && season && styles.length > 0) {
         const newItem = { name, image, type, season, styles };
         clothes.push(newItem);
@@ -225,10 +227,20 @@
       const outfitSeason = document.getElementById("outfitSeasonInput").value;
       const outfitStyle = document.getElementById("outfitStyleInput").value;
 
-      const selectedItems = clothes.filter(item =>
+      let selectedItems = clothes.filter(item =>
         (item.season === outfitSeason || item.season === 'uniestacao') &&
-        item.styles.includes(outfitStyle)
+        (item.styles.includes(outfitStyle) || outfitStyle !== 'surpresa')
       );
+
+      // Se "surpresa" for selecionado, escolher um estilo aleatório
+      if (outfitStyle === 'surpresa') {
+        const stylesArray = ['streetwear', 'formal', 'casual'];
+        const randomStyle = stylesArray[Math.floor(Math.random() * stylesArray.length)];
+        selectedItems = clothes.filter(item =>
+          (item.season === outfitSeason || item.season === 'uniestacao') &&
+          item.styles.includes(randomStyle)
+        );
+      }
 
       const outfitList = document.getElementById("outfitList");
       outfitList.innerHTML = '';
