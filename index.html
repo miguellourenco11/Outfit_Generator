@@ -9,6 +9,8 @@
   <!-- Incluindo a fonte Montserrat Bold do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
@@ -244,11 +246,25 @@
     };
 
     const exportToExcel = () => {
-      const ws = XLSX.utils.json_to_sheet(clothes);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Peças');
-      XLSX.writeFile(wb, 'outfit_gerador.xlsx');
+  const exportData = clothes.map(item => {
+    return {
+      Nome: item.name,
+      "Link da imagem": item.image,
+      "Tipo de peça": item.type,
+      Estação: item.season,
+      Estilo1: item.styles[0] || '',
+      Estilo2: item.styles[1] || '',
+      Estilo3: item.styles[2] || '',
     };
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Peças');
+
+  XLSX.writeFile(workbook, 'clothes.xlsx');
+};
+
 
     // Renderizar as peças ao carregar
     renderClothes();
