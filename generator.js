@@ -1,0 +1,227 @@
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Plus, Sparkles } from "lucide-react";
+
+const clothingTypes = [
+  "tshirt", "camisola", "casaco", "calcas", "sapatos", "chapeu", "acessorio"
+];
+
+export default function OutfitGenerator() {
+  const [clothes, setClothes] = useState(() => {
+    const saved = localStorage.getItem("clothes");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [newItem, setNewItem] = useState({ name: "", image: "", link: "", type: "", styles: [], season: "" });
+  const [outfit, setOutfit] = useState([]);
+  const [season, setSeason] = useState("verao");
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("clothes", JSON.stringify(clothes));
+  }, [clothes]);
+
+  const handleStyleCheckbox = (style) => {
+    setNewItem((prev) => {
+      const styles = prev.styles.includes(style)
+        ? prev.styles.filter((s) => s !== style)
+        : [...prev.styles, style];
+      return { ...prev, styles };
+    });
+  };
+
+  const autofillFromLink = async (url) => {
+    try {
+      const res = await fetch(`/api/scrape?url=${encodeURIComponent(url)}`);
+      if (!res.ok) {
+        throw new Error(`Erro de rede: ${res.status}`);
+      }
+      const data = await res.json();
+      if (!data.name || !data.image) {
+        throw new Error("Dados incompletos retornados da API");
+      }
+
+      setNewItem((prev) => ({
+        ...prev,
+        name: data.name || prev.name,
+        image: data.image || prev.image,
+        link: url
+      }));
+      setError(null); // Clear any previous error
+
+    } catch (err) {
+      console.error("Erro ao preencher dados do link:", err);
+      setError("Não foi possível preencher os dados automaticamente. Por favor, preencha manualmente.");
+    }
+  };
+
+  const addClothingItem = () => {
+    if (newItem.name.trim() && newItem.type && newItem.styles.length > 0 && newItem.season) {
+      setClothes([...clothes, newItem]);
+      setNewItem({ name: "", image: "", link: "", type: "", styles: [], season: "" });
+    }
+  };
+
+  const removeClothingItem = (index) => {
+    const updatedClothes = clothes.filter((_, i) => i !== index);
+    setClothes(updatedClothes);
+  };
+
+  const generateOutfit = () => {
+    const filtered = clothes.filter(item => item.season === season);
+    const grouped = filtered.reduce((acc, item) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
+      return acc;
+    }, {});
+
+    const stylesCount = {};
+    filtered.forEach(item => {
+      item.styles.forEach(style => {
+        stylesCount[style] = (stylesCount[style] || 0) + 1;
+      });
+    });
+    const favoriteStyle = Object.entries(stylesCount).sort((a, b) => b[1] - a[1])[0]?.[0];
+
+    const required = ["tshirt", "camisola", "calcas", "sapatos"];
+    const optional = ["casaco", "chapeu", "acessorio"];
+
+    const selected = [
+      ...required.map(type => grouped[type]?.find(item => item.styles.includes(favoriteStyle)) || grouped[type]?.[0]),
+      ...optional.map(type => grouped[type]?.find(item => item.styles.includes(favoriteStyle)))
+    ].filter(Boolean);
+
+    setOutfit(selected);
+  };
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4 text-center">Gerador de Outfit</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+        <Input
+          placeholder="Link do produto (opcional)"
+          value={newItem.link}
+          onChange={(e) => {
+            const url = e.target.value;
+            setNewItem({ ...newItem, link: url });
+            if (url.startsWith("http")) autofillFromLink(url);
+          }}
+        />
+        <Input
+          placeholder="Nome da peça"
+          value={newItem.name}
+          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+        />
+        <Input
+          placeholder="URL da imagem"
+          value={newItem.image}
+          onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <select
+          value={newItem.type}
+          onChange={(e) => setNewItem({ ...newItem, type: e.target.value })}
+          className="border rounded p-2 text-sm"
+        >
+          <option value="">Tipo da peça</option>
+          {clothingTypes.map(type => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+
+        <select
+          value={newItem.season}
+          onChange={(e) => setNewItem({ ...newItem, season: e.target.value })}
+          className="border rounded p-2 text-sm"
+        >
+          <option value="">Estação</option>
+          <option value="verao">Verão</option>
+          <option value="inverno">Inverno</option>
+        </select>
+
+        <div className="flex flex-wrap gap-2 col-span-2">
+          {['casual', 'street', 'formal', 'minimal'].map((style) => (
+            <label key={style} className="flex items-center space-x-2 text-sm">
+              <input
+                type="checkbox"
+                checked={newItem.styles.includes(style)}
+                onChange={() => handleStyleCheckbox(style)}
+              />
+              <span className="capitalize">{style}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <Button onClick={addClothingItem} className="mb-6 w-full">
+        <Plus className="w-4 h-4 mr-2" /> Adicionar
+      </Button>
+
+      {error && (
+        <div className="text-red-500 mb-4">
+          <p>{error}</p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        {clothes.map((item, index) => (
+          <Card key={index} className="overflow-hidden">
+            <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+            <CardContent className="p-2 text-sm">
+              <p className="font-medium">{item.name}</p>
+              <p className="text-xs text-gray-500">{item.type} • {item.styles.join(", ")} • {item.season}</p>
+              <a href={item.link} target="_blank" className="text-blue-500 underline text-xs">
+                Ver na loja
+              </a>
+              <Button
+                onClick={() => removeClothingItem(index)}
+                className="mt-2 text-red-500 text-xs"
+              >
+                Remover
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="flex justify-between gap-4 mb-4">
+        <select
+          value={season}
+          onChange={(e) => setSeason(e.target.value)}
+          className="border rounded p-2 text-sm w-full"
+        >
+          <option value="verao">Verão</option>
+          <option value="inverno">Inverno</option>
+        </select>
+
+        <Button onClick={generateOutfit} className="w-full">
+          <Sparkles className="w-4 h-4 mr-2" /> Criar Outfit
+        </Button>
+      </div>
+
+      {outfit.length > 0 && (
+        <div className="bg-gray-100 p-4 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-2">Outfit Sugerido:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {outfit.map((item, index) => (
+              <Card key={index} className="overflow-hidden">
+                <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+                <CardContent className="p-2 text-sm">
+                  <p className="font-medium">{item.name}</p>
+                  <p className="text-xs text-gray-500">{item.type} • {item.styles.join(", ")} • {item.season}</p>
+                  <a href={item.link} target="_blank" className="text-blue-500 underline text-xs">
+                    Ver na loja
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
