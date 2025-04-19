@@ -1,57 +1,224 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Outfit Generator</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/892/892458.png" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Outfit</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/2/28/Logo_Pull_%26_Bear_2020.svg" type="image/png">
+  
+  <!-- Incluindo a fonte Montserrat Bold do Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Incluindo a biblioteca xlsx -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  
   <style>
     body {
-      background-color: #f5f3eb; /* tom bege suave */
+      font-family: 'Montserrat', sans-serif;
+      background-color: #F7F7F7;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #FFF;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 80%;
+      max-width: 1200px;
+      border-radius: 10px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #6a4e23;
+      margin-bottom: 20px;
+      font-weight: 700; /* Usando a fonte bold */
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #6a4e23;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #4e3621;
+    }
+    .item-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #F1F1F1;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .item-card img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .item-card p {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .item-card a {
+      color: #6a4e23;
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+    .outfit-section {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
     }
   </style>
 </head>
-<body class="text-brown-900 font-sans">
-  <div class="max-w-4xl mx-auto p-6">
-    <h1 class="text-4xl font-bold mb-6 text-center text-[#4e342e]">Gerador de Outfit</h1>
-
-    <div class="bg-[#d7ccc8] p-4 rounded-lg shadow mb-6">
-      <input
-        type="text"
-        placeholder="Link do produto"
-        class="w-full p-2 mb-2 border border-[#6d4c41] rounded bg-[#efebe9] placeholder-[#4e342e] text-[#4e342e]"
-      />
-      <input
-        type="text"
-        placeholder="Nome da peça"
-        class="w-full p-2 mb-2 border border-[#6d4c41] rounded bg-[#efebe9] placeholder-[#4e342e] text-[#4e342e]"
-      />
-      <input
-        type="text"
-        placeholder="URL da imagem"
-        class="w-full p-2 mb-4 border border-[#6d4c41] rounded bg-[#efebe9] placeholder-[#4e342e] text-[#4e342e]"
-      />
-      <button class="bg-[#6d4c41] text-white px-4 py-2 rounded hover:bg-[#5d4037] w-full font-semibold">
-        Adicionar Peça
-      </button>
+<body>
+  <div class="container">
+    <h1>Gerador de Outfit</h1>
+    
+    <div>
+      <input type="text" id="linkInput" placeholder="Cole o link do produto" />
+      <button onclick="autofillFromLink()">Preencher dados do link</button>
     </div>
 
-    <button class="bg-[#8d6e63] text-white px-4 py-2 rounded hover:bg-[#795548] w-full font-semibold mb-4">
-      Criar Outfit
-    </button>
-
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-      <!-- Exemplo de peça -->
-      <div class="bg-[#efebe9] rounded-lg overflow-hidden shadow">
-        <img src="https://via.placeholder.com/300" class="w-full h-40 object-cover" />
-        <div class="p-2 text-sm text-[#4e342e]">
-          <p class="font-medium">T-shirt Básica</p>
-          <p class="text-xs">tshirt • casual • verão</p>
-          <a href="#" class="text-[#6d4c41] underline text-xs">Ver na loja</a>
-        </div>
-      </div>
+    <div>
+      <input type="text" id="nameInput" placeholder="Nome da peça" />
+      <input type="text" id="imageInput" placeholder="URL da imagem" />
+      <select id="typeInput">
+        <option value="">Tipo de peça</option>
+        <option value="tshirt">T-shirt</option>
+        <option value="camisola">Camisola</option>
+        <option value="casaco">Casaco</option>
+        <option value="calcas">Calças</option>
+        <option value="sapatos">Sapatos</option>
+        <option value="acessorio">Acessórios</option>
+        <option value="chapeu">Chapéu</option>
+      </select>
+      <select id="seasonInput">
+        <option value="verao">Verão</option>
+        <option value="inverno">Inverno</option>
+      </select>
+      <select id="styleInput">
+        <option value="">Escolha o estilo</option>
+        <option value="streetwear">Streetwear</option>
+        <option value="formal">Formal</option>
+        <option value="casual">Casual</option>
+      </select>
+      <button onclick="addClothingItem()">Adicionar peça</button>
     </div>
+
+    <h2>Minhas peças</h2>
+    <div class="outfit-section" id="clothesList"></div>
+
+    <div>
+      <button onclick="generateOutfit()">Sugerir Outfit</button>
+      <button onclick="exportToExcel()">Exportar para Excel</button>
+    </div>
+
+    <h2>Outfit Sugerido</h2>
+    <div class="outfit-section" id="outfitList"></div>
   </div>
+
+  <script>
+    const clothes = JSON.parse(localStorage.getItem("clothes")) || [];
+
+    const autofillFromLink = async () => {
+      const url = document.getElementById("linkInput").value;
+      try {
+        const res = await fetch(`/api/scrape?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        document.getElementById("nameInput").value = data.name || '';
+        document.getElementById("imageInput").value = data.image || '';
+      } catch (error) {
+        console.error("Erro ao preencher dados do link:", error);
+      }
+    };
+
+    const addClothingItem = () => {
+      const name = document.getElementById("nameInput").value;
+      const image = document.getElementById("imageInput").value;
+      const type = document.getElementById("typeInput").value;
+      const season = document.getElementById("seasonInput").value;
+      const style = document.getElementById("styleInput").value;
+      
+      if (name && image && type && season && style) {
+        const newItem = { name, image, type, season, style };
+        clothes.push(newItem);
+        localStorage.setItem("clothes", JSON.stringify(clothes));
+        renderClothes();
+      }
+    };
+
+    const renderClothes = () => {
+      const clothesList = document.getElementById("clothesList");
+      clothesList.innerHTML = '';
+      
+      clothes.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" />
+          <p><strong>${item.name}</strong><br />${item.type} • ${item.season} • ${item.style}</p>
+          <a href="#" onclick="removeClothingItem(${index})">Remover</a>
+        `;
+        clothesList.appendChild(card);
+      });
+    };
+
+    const removeClothingItem = (index) => {
+      clothes.splice(index, 1);
+      localStorage.setItem("clothes", JSON.stringify(clothes));
+      renderClothes();
+    };
+
+    const generateOutfit = () => {
+      const season = document.getElementById("seasonInput").value;
+      const style = document.getElementById("styleInput").value;
+
+      const filteredClothes = clothes.filter(item => item.season === season && item.style === style);
+      
+      const outfitList = document.getElementById("outfitList");
+      outfitList.innerHTML = '';
+
+      filteredClothes.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" />
+          <p><strong>${item.name}</strong><br />${item.type} • ${item.season} • ${item.style}</p>
+        `;
+        outfitList.appendChild(card);
+      });
+    };
+
+    const exportToExcel = () => {
+      const ws = XLSX.utils.json_to_sheet(clothes);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Pecas de Roupa");
+      XLSX.writeFile(wb, "peças_de_roupa.xlsx");
+    };
+
+    renderClothes();
+  </script>
 </body>
 </html>
