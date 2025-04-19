@@ -12,6 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
+    /* Estilo do corpo e dos componentes */
     body {
       font-family: 'Montserrat', sans-serif;
       background-color: #F7F7F7;
@@ -168,7 +169,18 @@
   </div>
 
   <script>
-    const clothes = JSON.parse(localStorage.getItem("clothes")) || [];
+    let clothes = [];
+
+    // Carregar o JSON de "clothes.json" ao abrir a página
+    fetch('clothes.json')
+      .then(response => response.json())
+      .then(data => {
+        clothes = data;
+        renderClothes();
+      })
+      .catch(error => {
+        console.error("Erro ao carregar clothes.json:", error);
+      });
 
     const addClothingItem = () => {
       const name = document.getElementById("nameInput").value;
@@ -183,8 +195,8 @@
       if (name && image && type && season && styles.length > 0) {
         const newItem = { name, image, type, season, styles };
         clothes.push(newItem);
-        localStorage.setItem("clothes", JSON.stringify(clothes));
         renderClothes();
+        updateClothesJSON();
       }
     };
 
@@ -206,8 +218,16 @@
 
     const removeClothingItem = (index) => {
       clothes.splice(index, 1);
-      localStorage.setItem("clothes", JSON.stringify(clothes));
       renderClothes();
+      updateClothesJSON();
+    };
+
+    const updateClothesJSON = () => {
+      const blob = new Blob([JSON.stringify(clothes, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'clothes.json';
+      link.click();
     };
 
     const generateOutfit = () => {
@@ -244,16 +264,9 @@
       });
     };
 
-   const exportToJSON = () => {
-   const blob = new Blob([JSON.stringify(clothes, null, 2)], { type: 'application/json' });
-   const link = document.createElement('a');
-   link.href = URL.createObjectURL(blob);
-   link.download = 'clothes.json';
-   link.click();
-  };
-
-    // Renderizar as peças ao carregar
-    renderClothes();
+    const exportToJSON = () => {
+      updateClothesJSON();
+    };
   </script>
 </body>
 </html>
