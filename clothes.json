@@ -1,1 +1,33 @@
-[]
+[
+  {
+    "name": "Adidas VL Court",
+    "image": "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/6e8801647b9f4ead8519afd2010a8463_9366/Sapatilhas_Samba_Decon_Branco_IF0642_04_standard.jpg",
+    "type": "sapatos",
+    "season": "uniestacao",
+    "styles": [
+      "streetwear",
+      "formal",
+      "casual"
+    ]
+  },
+  {
+    "name": "Rolling Stones Pull&Bear",
+    "image": "https://i.ebayimg.com/thumbs/images/g/uUEAAOSwYdJk4sNV/s-l1200.jpg",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "streetwear",
+      "casual"
+    ]
+  },
+  {
+    "name": "Calças de fato de treino Baggy",
+    "image": "https://static.pullandbear.net/assets/public/fc83/c24e/3b9140f9a821/3c4fd793c303/07679500712-A6M/07679500712-A6M.jpg?ts=1736956800476&w=1610&f=auto",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "streetwear",
+      "casual"
+    ]
+  }
+]
