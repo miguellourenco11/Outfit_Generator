@@ -1,3 +1,23 @@
+<<<<<<< HEAD
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Plus, Sparkles } from "lucide-react";
+
+const clothingTypes = [
+  "tshirt", "camisola", "casaco", "calcas", "sapatos", "chapeu", "acessorio"
+];
+
+export default function OutfitGenerator() {
+  const [clothes, setClothes] = useState(() => {
+    const saved = localStorage.getItem("clothes");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [newItem, setNewItem] = useState({ name: "", image: "", link: "", type: "", styles: [], season: "" });
+  const [outfit, setOutfit] = useState([]);
+  const [season, setSeason] = useState("verao");
+=======
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -13,146 +33,367 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
   
   <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #F7F7F7;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      background-color: #FFF;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      width: 80%;
-      max-width: 1200px;
-      border-radius: 10px;
-    }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #F7F7F7;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    background-color: #FFF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 80%;
+    max-width: 1200px;
+    border-radius: 10px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #4e3621; /* Castanho escuro */
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    font-weight: 700; /* Montserrat Bold nos inputs */
+  }
+
+  button {
+    background-color: #4e3621; /* Castanho escuro */
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 700; /* Montserrat Bold nos botões */
+  }
+
+  button:hover {
+    background-color: #3c2a19;
+  }
+
+  .item-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F1F1F1;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .item-card img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .item-card p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .item-card a {
+    color: #4e3621;
+    text-decoration: none;
+    font-size: 0.8rem;
+  }
+
+  .outfit-section {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .checkboxes label {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+  }
+
+  .question-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  /* Responsividade para dispositivos móveis */
+  @media (max-width: 768px) {
     h1 {
-      text-align: center;
-      font-size: 2rem;
-      color: #4e3621; /* Castanho escuro */
-      margin-bottom: 20px;
-      font-weight: 700;
+      font-size: 1.5rem; /* Ajuste do tamanho do título */
     }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 1rem;
-      box-sizing: border-box;
-      font-weight: 700; /* Montserrat Bold nos inputs */
+
+    .container {
+      width: 95%; /* Deixa o container mais estreito em telas pequenas */
+      padding: 10px; /* Menos padding para otimizar o espaço */
     }
-    button {
-      background-color: #4e3621; /* Castanho escuro */
-      color: white;
-      border: none;
-      padding: 15px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: 700; /* Montserrat Bold nos botões */
+
+    input, select, button {
+      font-size: 14px; /* Fontes menores em dispositivos móveis */
+      padding: 12px; /* Ajuste do padding para inputs e botões */
     }
-    button:hover {
-      background-color: #3c2a19;
-    }
+
     .item-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: #F1F1F1;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px; /* Menos padding nos cards */
     }
-    .item-card img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
-    .item-card p {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      text-align: center;
-    }
-    .item-card a {
-      color: #4e3621;
-      text-decoration: none;
-      font-size: 0.8rem;
-    }
+
     .outfit-section {
-      margin-top: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Colunas menores em dispositivos móveis */
+      gap: 10px; /* Menos espaço entre as colunas */
     }
-    .checkboxes {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+
+    /* Ajuste dos checkboxes */
     .checkboxes label {
-      font-weight: 700;
-      display: flex;
-      align-items: center;
+      font-size: 14px; /* Fontes menores para os checkboxes */
     }
+
     .question-section {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      margin-top: 20px;
+      flex-direction: column; /* Deixa a seção de perguntas em coluna */
+      align-items: stretch;
     }
-  </style>
+  }
+
+  /* Responsividade para dispositivos muito pequenos */
+  @media (max-width: 480px) {
+    .container {
+      padding: 5px; /* Ainda menos padding para telas pequenas */
+    }
+
+    button {
+      padding: 12px; /* Botões mais compactos em dispositivos pequenos */
+    }
+
+    input, select {
+      font-size: 13px; /* Redução do tamanho da fonte */
+    }
+
+    h1 {
+      font-size: 1.25rem; /* Tamanho menor do título */
+    }
+
+    .item-card {
+      padding: 8px; /* Card mais compacto */
+    }
+
+    .outfit-section {
+      grid-template-columns: 1fr; /* Apenas uma coluna em dispositivos muito pequenos */
+    }
+  }
+</style>
+
 </head>
 <body>
   <div class="container">
     <h1>Gerador de Outfit</h1>
 
-    <!-- Botão Exportar para Excel Moved Above -->
-    <button onclick="exportToExcel()">Exportar para Excel</button>
-
     <div>
       <input type="text" id="linkInput" placeholder="Cole o link do produto" />
       <button onclick="autofillFromLink()">Preencher dados do link</button>
     </div>
+>>>>>>> 4fc9112ea75694ad04a5f436be73d6cb0f79565a
 
-    <div>
-      <input type="text" id="nameInput" placeholder="Nome da peça" />
-      <input type="text" id="imageInput" placeholder="URL da imagem" />
-      <select id="typeInput">
-        <option value="">Tipo de peça</option>
-        <option value="tshirt">T-shirt</option>
-        <option value="camisola">Camisola</option>
-        <option value="casaco">Casaco</option>
-        <option value="calcas">Calças</option>
-        <option value="sapatos">Sapatos</option>
-        <option value="acessorio">Acessórios</option>
-        <option value="chapeu">Chapéu</option>
-      </select>
-      <select id="seasonInput">
-        <option value="verao">Verão</option>
-        <option value="inverno">Inverno</option>
-        <option value="uniestacao">Uniestação (Verão & Inverno)</option>
-      </select>
-      
-      <div class="checkboxes">
-        <label><input type="checkbox" value="streetwear" id="styleStreet"> Streetwear</label>
-        <label><input type="checkbox" value="formal" id="styleFormal"> Formal</label>
-        <label><input type="checkbox" value="casual" id="styleCasual"> Casual</label>
+  useEffect(() => {
+    localStorage.setItem("clothes", JSON.stringify(clothes));
+  }, [clothes]);
+
+  const handleStyleCheckbox = (style) => {
+    setNewItem((prev) => {
+      const styles = prev.styles.includes(style)
+        ? prev.styles.filter((s) => s !== style)
+        : [...prev.styles, style];
+      return { ...prev, styles };
+    });
+  };
+
+  const addClothingItem = () => {
+    if (newItem.name.trim() && newItem.type && newItem.styles.length > 0 && newItem.season) {
+      setClothes([...clothes, newItem]);
+      setNewItem({ name: "", image: "", link: "", type: "", styles: [], season: "" });
+    }
+  };
+
+  const removeClothingItem = (index) => {
+    const updatedClothes = [...clothes];
+    updatedClothes.splice(index, 1);
+    setClothes(updatedClothes);
+  };
+
+  const generateOutfit = () => {
+    const filtered = clothes.filter(item => item.season === season);
+    const grouped = filtered.reduce((acc, item) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
+      return acc;
+    }, {});
+
+    const stylesCount = {};
+    filtered.forEach(item => {
+      item.styles.forEach(style => {
+        stylesCount[style] = (stylesCount[style] || 0) + 1;
+      });
+    });
+    const favoriteStyle = Object.entries(stylesCount).sort((a, b) => b[1] - a[1])[0]?.[0];
+
+    const required = ["tshirt", "camisola", "calcas", "sapatos"];
+    const optional = ["casaco", "chapeu", "acessorio"];
+
+    const selected = [
+      ...required.map(type => grouped[type]?.find(item => item.styles.includes(favoriteStyle)) || grouped[type]?.[0]),
+      ...optional.map(type => grouped[type]?.find(item => item.styles.includes(favoriteStyle)))
+    ].filter(Boolean);
+
+    setOutfit(selected);
+  };
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4 text-center">Gerador de Outfit</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+        <Input
+          placeholder="Nome da peça"
+          value={newItem.name}
+          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+        />
+        <Input
+          placeholder="URL da imagem"
+          value={newItem.image}
+          onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+        />
       </div>
 
-      <button onclick="addClothingItem()">Adicionar peça</button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <select
+          value={newItem.type}
+          onChange={(e) => setNewItem({ ...newItem, type: e.target.value })}
+          className="border rounded p-2 text-sm"
+        >
+          <option value="">Tipo da peça</option>
+          {clothingTypes.map(type => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+
+        <select
+          value={newItem.season}
+          onChange={(e) => setNewItem({ ...newItem, season: e.target.value })}
+          className="border rounded p-2 text-sm"
+        >
+          <option value="">Estação</option>
+          <option value="verao">Verão</option>
+          <option value="inverno">Inverno</option>
+        </select>
+
+        <div className="flex flex-wrap gap-2 col-span-2">
+          {['casual', 'street', 'formal', 'minimal'].map((style) => (
+            <label key={style} className="flex items-center space-x-2 text-sm">
+              <input
+                type="checkbox"
+                checked={newItem.styles.includes(style)}
+                onChange={() => handleStyleCheckbox(style)}
+              />
+              <span className="capitalize">{style}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <Button onClick={addClothingItem} className="mb-6 w-full">
+        <Plus className="w-4 h-4 mr-2" /> Adicionar
+      </Button>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        {clothes.map((item, index) => (
+          <Card key={index} className="overflow-hidden">
+            <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+            <CardContent className="p-2 text-sm">
+              <p className="font-medium">{item.name}</p>
+              <p className="text-xs text-gray-500">{item.type} • {item.styles.join(", ")} • {item.season}</p>
+              <a href={item.link} target="_blank" className="text-blue-500 underline text-xs">
+                Ver na loja
+              </a>
+              <Button 
+                onClick={() => removeClothingItem(index)} 
+                className="mt-2 w-full bg-red-500 hover:bg-red-700 text-white"
+              >
+                Remover
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="flex justify-between gap-4 mb-4">
+        <select
+          value={season}
+          onChange={(e) => setSeason(e.target.value)}
+          className="border rounded p-2 text-sm w-full"
+        >
+          <option value="verao">Verão</option>
+          <option value="inverno">Inverno</option>
+        </select>
+
+        <Button onClick={generateOutfit} className="w-full">
+          <Sparkles className="w-4 h-4 mr-2" /> Criar Outfit
+        </Button>
+      </div>
+
+      {outfit.length > 0 && (
+        <div className="bg-gray-100 p-4 rounded-xl shadow">
+          <h2 className="text-xl font-semibold mb-2">Outfit Sugerido:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {outfit.map((item, index) => (
+              <Card key={index} className="overflow-hidden">
+                <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+                <CardContent className="p-2 text-sm">
+                  <p className="font-medium">{item.name}</p>
+                  <p className="text-xs text-gray-500">{item.type} • {item.styles.join(", ")} • {item.season}</p>
+                  <a href={item.link} target="_blank" className="text-blue-500 underline text-xs">
+                    Ver na loja
+                  </a>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
+<<<<<<< HEAD
+  );
+}
+=======
 
     <h2>Minhas peças</h2>
     <div class="outfit-section" id="clothesList"></div>
 
+    <!-- Botão Exportar para Excel Moved Above -->
+    <button onclick="exportToExcel()">Exportar para Excel</button>
+    
     <div class="question-section">
       <select id="outfitSeasonInput">
         <option value="verao">Verão</option>
@@ -269,3 +510,4 @@
   </script>
 </body>
 </html>
+>>>>>>> 4fc9112ea75694ad04a5f436be73d6cb0f79565a
