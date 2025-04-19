@@ -9,9 +9,6 @@
   <!-- Incluindo a fonte Montserrat Bold do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
   
-  <!-- Incluindo a biblioteca xlsx -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-  
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
@@ -114,9 +111,9 @@
   <div class="container">
     <h1>Gerador de Outfit</h1>
 
+    <!-- Formulário de link manual -->
     <div>
       <input type="text" id="linkInput" placeholder="Cole o link do produto" />
-      <button onclick="autofillFromLink()">Preencher dados do link</button>
     </div>
 
     <div>
@@ -150,7 +147,7 @@
     <h2>Minhas peças</h2>
     <div class="outfit-section" id="clothesList"></div>
 
-    <!-- Botão Exportar para Excel Moved Above -->
+    <!-- Botão Exportar para Excel -->
     <button onclick="exportToExcel()">Exportar para Excel</button>
 
     <div class="question-section">
@@ -176,18 +173,6 @@
 
   <script>
     const clothes = JSON.parse(localStorage.getItem("clothes")) || [];
-
-    const autofillFromLink = async () => {
-      const url = document.getElementById("linkInput").value;
-      try {
-        const res = await fetch(`/api/scrape?url=${encodeURIComponent(url)}`);
-        const data = await res.json();
-        document.getElementById("nameInput").value = data.name || '';
-        document.getElementById("imageInput").value = data.image || '';
-      } catch (error) {
-        console.error("Erro ao preencher dados do link:", error);
-      }
-    };
 
     const addClothingItem = () => {
       const name = document.getElementById("nameInput").value;
