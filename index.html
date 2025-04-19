@@ -1,138 +1,57 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gerador de Outfit</title>
-
-  <!-- 🌟 Ícone do site (podes mudar a imagem depois) -->
-  <link rel="icon" type="image/png" href="https://fav.farm/👕" />
-
-  <!-- 💄 Tailwind CSS CDN -->
+  <title>Outfit Generator</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/892/892458.png" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #f5f3eb; /* tom bege suave */
+    }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen p-6 font-sans">
+<body class="text-brown-900 font-sans">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-6 text-center text-[#4e342e]">Gerador de Outfit</h1>
 
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Gerador de Outfit</h1>
-
-    <!-- Formulário de adicionar peça -->
-    <div class="bg-white p-6 rounded-xl shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Adicionar nova peça</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <input id="link" placeholder="Link do produto" class="border p-2 rounded" />
-        <input id="nome" placeholder="Nome da peça" class="border p-2 rounded" />
-        <input id="imagem" placeholder="URL da imagem" class="border p-2 rounded" />
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <select id="tipo" class="border p-2 rounded">
-          <option value="">Tipo</option>
-          <option value="tshirt">T-shirt</option>
-          <option value="camisola">Camisola</option>
-          <option value="casaco">Casaco</option>
-          <option value="calcas">Calças</option>
-          <option value="sapatos">Sapatos</option>
-          <option value="chapeu">Chapéu</option>
-          <option value="acessorio">Acessório</option>
-        </select>
-
-        <select id="estacao" class="border p-2 rounded">
-          <option value="">Estação</option>
-          <option value="verao">Verão</option>
-          <option value="inverno">Inverno</option>
-        </select>
-
-        <div class="col-span-2 flex gap-4">
-          <label><input type="checkbox" class="mr-1" value="casual" /> Casual</label>
-          <label><input type="checkbox" class="mr-1" value="street" /> Street</label>
-          <label><input type="checkbox" class="mr-1" value="formal" /> Formal</label>
-          <label><input type="checkbox" class="mr-1" value="minimal" /> Minimal</label>
-        </div>
-      </div>
-
-      <button onclick="adicionarPeca()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full">
-        Adicionar peça
+    <div class="bg-[#d7ccc8] p-4 rounded-lg shadow mb-6">
+      <input
+        type="text"
+        placeholder="Link do produto"
+        class="w-full p-2 mb-2 border border-[#6d4c41] rounded bg-[#efebe9] placeholder-[#4e342e] text-[#4e342e]"
+      />
+      <input
+        type="text"
+        placeholder="Nome da peça"
+        class="w-full p-2 mb-2 border border-[#6d4c41] rounded bg-[#efebe9] placeholder-[#4e342e] text-[#4e342e]"
+      />
+      <input
+        type="text"
+        placeholder="URL da imagem"
+        class="w-full p-2 mb-4 border border-[#6d4c41] rounded bg-[#efebe9] placeholder-[#4e342e] text-[#4e342e]"
+      />
+      <button class="bg-[#6d4c41] text-white px-4 py-2 rounded hover:bg-[#5d4037] w-full font-semibold">
+        Adicionar Peça
       </button>
     </div>
 
-    <!-- Onde aparecem as peças -->
-    <div id="listaPecas" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6"></div>
-
-    <!-- Botão para gerar outfit -->
-    <button onclick="gerarOutfit()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded w-full mb-6 text-lg">
-      ✨ Criar Outfit
+    <button class="bg-[#8d6e63] text-white px-4 py-2 rounded hover:bg-[#795548] w-full font-semibold mb-4">
+      Criar Outfit
     </button>
 
-    <!-- Resultado do outfit -->
-    <div id="outfit" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
-  </div>
-
-  <script>
-    const pecas = JSON.parse(localStorage.getItem("pecas") || "[]");
-    const renderizarPecas = () => {
-      const lista = document.getElementById("listaPecas");
-      lista.innerHTML = "";
-      pecas.forEach((p, i) => {
-        const el = document.createElement("div");
-        el.className = "bg-white shadow rounded overflow-hidden";
-        el.innerHTML = `
-          <img src="${p.imagem}" alt="${p.nome}" class="w-full h-32 object-cover" />
-          <div class="p-2">
-            <p class="font-semibold">${p.nome}</p>
-            <p class="text-sm text-gray-500">${p.tipo} • ${p.estilos.join(", ")} • ${p.estacao}</p>
-            <a href="${p.link}" class="text-blue-600 text-sm" target="_blank">Ver na loja</a><br>
-            <button onclick="removerPeca(${i})" class="text-red-500 text-xs mt-1">Remover</button>
-          </div>
-        `;
-        lista.appendChild(el);
-      });
-    };
-
-    const adicionarPeca = () => {
-      const nome = document.getElementById("nome").value;
-      const imagem = document.getElementById("imagem").value;
-      const link = document.getElementById("link").value;
-      const tipo = document.getElementById("tipo").value;
-      const estacao = document.getElementById("estacao").value;
-      const estilos = Array.from(document.querySelectorAll("input[type=checkbox]:checked")).map(e => e.value);
-
-      if (!nome || !imagem || !link || !tipo || !estacao || estilos.length === 0) return alert("Preenche todos os campos!");
-
-      pecas.push({ nome, imagem, link, tipo, estacao, estilos });
-      localStorage.setItem("pecas", JSON.stringify(pecas));
-      renderizarPecas();
-
-      document.querySelectorAll("input").forEach(i => i.value = "");
-      document.querySelectorAll("input[type=checkbox]").forEach(c => c.checked = false);
-    };
-
-    const removerPeca = (index) => {
-      pecas.splice(index, 1);
-      localStorage.setItem("pecas", JSON.stringify(pecas));
-      renderizarPecas();
-    };
-
-    const gerarOutfit = () => {
-      const estacaoAtual = "verao";
-      const lista = pecas.filter(p => p.estacao === estacaoAtual);
-      const tiposNecessarios = ["tshirt", "camisola", "calcas", "sapatos"];
-      const outfit = tiposNecessarios.map(tipo => lista.find(p => p.tipo === tipo)).filter(Boolean);
-      document.getElementById("outfit").innerHTML = outfit.map(p => `
-        <div class="bg-white shadow rounded overflow-hidden">
-          <img src="${p.imagem}" alt="${p.nome}" class="w-full h-32 object-cover" />
-          <div class="p-2">
-            <p class="font-semibold">${p.nome}</p>
-            <p class="text-sm text-gray-500">${p.tipo} • ${p.estilos.join(", ")} • ${p.estacao}</p>
-            <a href="${p.link}" class="text-blue-600 text-sm" target="_blank">Ver na loja</a>
-          </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <!-- Exemplo de peça -->
+      <div class="bg-[#efebe9] rounded-lg overflow-hidden shadow">
+        <img src="https://via.placeholder.com/300" class="w-full h-40 object-cover" />
+        <div class="p-2 text-sm text-[#4e342e]">
+          <p class="font-medium">T-shirt Básica</p>
+          <p class="text-xs">tshirt • casual • verão</p>
+          <a href="#" class="text-[#6d4c41] underline text-xs">Ver na loja</a>
         </div>
-      `).join("");
-    };
-
-    renderizarPecas();
-  </script>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
-
