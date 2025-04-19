@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerador de Outfit</title>
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/2/28/Logo_Pull_%26_Bear_2020.svg" type="image/png">
+  
+  <!-- Incluindo a fonte Montserrat Bold do Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- Incluindo a biblioteca xlsx -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+  
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
@@ -105,132 +113,158 @@
 <body>
   <div class="container">
     <h1>Gerador de Outfit</h1>
-    
-    <!-- Formulário para adicionar peças -->
+
+    <!-- Botão Exportar para Excel Moved Above -->
+    <button onclick="exportToExcel()">Exportar para Excel</button>
+
     <div>
-      <input id="item-name" type="text" placeholder="Nome da peça" />
-      <input id="item-image" type="text" placeholder="URL da imagem" />
-      <select id="item-type">
-        <option value="">Tipo da peça</option>
+      <input type="text" id="linkInput" placeholder="Cole o link do produto" />
+      <button onclick="autofillFromLink()">Preencher dados do link</button>
+    </div>
+
+    <div>
+      <input type="text" id="nameInput" placeholder="Nome da peça" />
+      <input type="text" id="imageInput" placeholder="URL da imagem" />
+      <select id="typeInput">
+        <option value="">Tipo de peça</option>
         <option value="tshirt">T-shirt</option>
         <option value="camisola">Camisola</option>
         <option value="casaco">Casaco</option>
         <option value="calcas">Calças</option>
         <option value="sapatos">Sapatos</option>
+        <option value="acessorio">Acessórios</option>
         <option value="chapeu">Chapéu</option>
-        <option value="acessorio">Acessório</option>
       </select>
-      <select id="item-season">
-        <option value="">Estação</option>
+      <select id="seasonInput">
         <option value="verao">Verão</option>
         <option value="inverno">Inverno</option>
+        <option value="uniestacao">Uniestação (Verão & Inverno)</option>
       </select>
       
       <div class="checkboxes">
-        <label><input type="checkbox" id="style-casual" /> Casual</label>
-        <label><input type="checkbox" id="style-street" /> Street</label>
-        <label><input type="checkbox" id="style-formal" /> Formal</label>
-        <label><input type="checkbox" id="style-minimal" /> Minimal</label>
+        <label><input type="checkbox" value="streetwear" id="styleStreet"> Streetwear</label>
+        <label><input type="checkbox" value="formal" id="styleFormal"> Formal</label>
+        <label><input type="checkbox" value="casual" id="styleCasual"> Casual</label>
       </div>
-      
-      <button id="add-item">Adicionar Peça</button>
+
+      <button onclick="addClothingItem()">Adicionar peça</button>
     </div>
-    
-    <hr />
-    
-    <!-- Seção de exibição de peças -->
-    <div id="clothes-list"></div>
-    
-    <hr />
-    
-    <!-- Seção de sugestão de outfit -->
-    <select id="season-select">
-      <option value="verao">Verão</option>
-      <option value="inverno">Inverno</option>
-    </select>
-    <button id="generate-outfit">Criar Outfit</button>
-    
-    <div id="outfit-suggested"></div>
+
+    <h2>Minhas peças</h2>
+    <div class="outfit-section" id="clothesList"></div>
+
+    <div class="question-section">
+      <select id="outfitSeasonInput">
+        <option value="verao">Verão</option>
+        <option value="inverno">Inverno</option>
+      </select>
+      <select id="outfitStyleInput">
+        <option value="streetwear">Streetwear</option>
+        <option value="formal">Formal</option>
+        <option value="casual">Casual</option>
+        <option value="surpresa">Surpresa</option> <!-- Estilo surpresa ao sugerir outfit -->
+      </select>
+    </div>
+
+    <div>
+      <button onclick="generateOutfit()">Sugerir Outfit</button>
+    </div>
+
+    <h2>Outfit Sugerido</h2>
+    <div class="outfit-section" id="outfitList"></div>
   </div>
 
   <script>
-    const clothingTypes = ["tshirt", "camisola", "casaco", "calcas", "sapatos", "chapeu", "acessorio"];
-    const styles = ["casual", "street", "formal", "minimal"];
-    
-    let clothes = JSON.parse(localStorage.getItem("clothes")) || [];
-    
-    const addItemButton = document.getElementById("add-item");
-    const generateOutfitButton = document.getElementById("generate-outfit");
-    const clothesList = document.getElementById("clothes-list");
-    const outfitSuggested = document.getElementById("outfit-suggested");
-    const seasonSelect = document.getElementById("season-select");
-    
-    addItemButton.addEventListener("click", () => {
-      const name = document.getElementById("item-name").value;
-      const image = document.getElementById("item-image").value;
-      const type = document.getElementById("item-type").value;
-      const season = document.getElementById("item-season").value;
-      const itemStyles = styles.filter(style => document.getElementById(`style-${style}`).checked);
-      
-      if (name && image && type && season && itemStyles.length > 0) {
-        const newItem = { name, image, type, season, styles: itemStyles };
+    const clothes = JSON.parse(localStorage.getItem("clothes")) || [];
+
+    const autofillFromLink = async () => {
+      const url = document.getElementById("linkInput").value;
+      try {
+        const res = await fetch(`/api/scrape?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        document.getElementById("nameInput").value = data.name || '';
+        document.getElementById("imageInput").value = data.image || '';
+      } catch (error) {
+        console.error("Erro ao preencher dados do link:", error);
+      }
+    };
+
+    const addClothingItem = () => {
+      const name = document.getElementById("nameInput").value;
+      const image = document.getElementById("imageInput").value;
+      const type = document.getElementById("typeInput").value;
+      const season = document.getElementById("seasonInput").value;
+      const styles = [];
+      if (document.getElementById("styleStreet").checked) styles.push('streetwear');
+      if (document.getElementById("styleFormal").checked) styles.push('formal');
+      if (document.getElementById("styleCasual").checked) styles.push('casual');
+
+      if (name && image && type && season && styles.length > 0) {
+        const newItem = { name, image, type, season, styles };
         clothes.push(newItem);
         localStorage.setItem("clothes", JSON.stringify(clothes));
         renderClothes();
       }
-    });
-    
-    function renderClothes() {
-      clothesList.innerHTML = "";
-      clothes.forEach((item, index) => {
-        const itemCard = document.createElement("div");
-        itemCard.classList.add("item-card");
-        itemCard.innerHTML = `
-          <img src="${item.image}" alt="${item.name}" />
-          <p>${item.name}</p>
-          <p>${item.type} • ${item.styles.join(", ")} • ${item.season}</p>
-          <button class="remove-item" data-index="${index}">Remover</button>
-        `;
-        clothesList.appendChild(itemCard);
-      });
-      
-      document.querySelectorAll(".remove-item").forEach(button => {
-        button.addEventListener("click", (e) => {
-          const index = e.target.dataset.index;
-          clothes.splice(index, 1);
-          localStorage.setItem("clothes", JSON.stringify(clothes));
-          renderClothes();
-        });
-      });
-    }
-    
-    generateOutfitButton.addEventListener("click", () => {
-      const selectedSeason = seasonSelect.value;
-      const filteredClothes = clothes.filter(item => item.season === selectedSeason);
-      const grouped = filteredClothes.reduce((acc, item) => {
-        if (!acc[item.type]) acc[item.type] = [];
-        acc[item.type].push(item);
-        return acc;
-      }, {});
-      
-      const outfit = [
-        ...["tshirt", "camisola", "calcas", "sapatos"].map(type => grouped[type]?.[0]),
-        ...["casaco", "chapeu", "acessorio"].map(type => grouped[type]?.[0])
-      ].filter(Boolean);
-      
-      outfitSuggested.innerHTML = "";
-      outfit.forEach(item => {
-        const outfitCard = document.createElement("div");
-        outfitCard.classList.add("item-card");
-        outfitCard.innerHTML = `
-          <img src="${item.image}" alt="${item.name}" />
-          <p>${item.name}</p>
-          <p>${item.type} • ${item.styles.join(", ")} • ${item.season}</p>
-        `;
-        outfitSuggested.appendChild(outfitCard);
-      });
-    });
+    };
 
+    const renderClothes = () => {
+      const clothesList = document.getElementById("clothesList");
+      clothesList.innerHTML = '';
+      
+      clothes.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <p>${item.name}</p>
+          <a href="${item.link}" target="_blank">Ver na loja</a>
+        `;
+        clothesList.appendChild(card);
+      });
+    };
+
+    const generateOutfit = () => {
+      const outfitSeason = document.getElementById("outfitSeasonInput").value;
+      const outfitStyle = document.getElementById("outfitStyleInput").value;
+
+      let selectedItems = clothes.filter(item =>
+        (item.season === outfitSeason || item.season === 'uniestacao') &&
+        (item.styles.includes(outfitStyle) || outfitStyle !== 'surpresa')
+      );
+
+      // Se "surpresa" for selecionado, escolher um estilo aleatório
+      if (outfitStyle === 'surpresa') {
+        const stylesArray = ['streetwear', 'formal', 'casual'];
+        const randomStyle = stylesArray[Math.floor(Math.random() * stylesArray.length)];
+        selectedItems = clothes.filter(item =>
+          (item.season === outfitSeason || item.season === 'uniestacao') &&
+          item.styles.includes(randomStyle)
+        );
+      }
+
+      const outfitList = document.getElementById("outfitList");
+      outfitList.innerHTML = '';
+
+      selectedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <p>${item.name}</p>
+          <a href="${item.link}" target="_blank">Ver na loja</a>
+        `;
+        outfitList.appendChild(card);
+      });
+    };
+
+    const exportToExcel = () => {
+      const ws = XLSX.utils.json_to_sheet(clothes);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Peças');
+      XLSX.writeFile(wb, 'outfit_gerador.xlsx');
+    };
+
+    // Renderizar as peças ao carregar
     renderClothes();
   </script>
 </body>
