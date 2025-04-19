@@ -144,8 +144,7 @@
     <h2>Minhas peças</h2>
     <div class="outfit-section" id="clothesList"></div>
 
-    <!-- Botão Exportar para Excel -->
-    <button onclick="exportToExcel()">Exportar para Excel</button>
+    <button onclick="exportToJSON()">Atualizar ficheiro JSON</button>
 
     <div class="question-section">
       <select id="outfitSeasonInput">
@@ -245,26 +244,13 @@
       });
     };
 
-    const exportToExcel = () => {
-  const exportData = clothes.map(item => {
-    return {
-      Nome: item.name,
-      "Link da imagem": item.image,
-      "Tipo de peça": item.type,
-      Estação: item.season,
-      Estilo1: item.styles[0] || '',
-      Estilo2: item.styles[1] || '',
-      Estilo3: item.styles[2] || '',
-    };
-  });
-
-  const worksheet = XLSX.utils.json_to_sheet(exportData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Peças');
-
-  XLSX.writeFile(workbook, 'clothes.xlsx');
-};
-
+   const exportToJSON = () => {
+   const blob = new Blob([JSON.stringify(clothes, null, 2)], { type: 'application/json' });
+   const link = document.createElement('a');
+   link.href = URL.createObjectURL(blob);
+   link.download = 'clothes.json';
+   link.click();
+  };
 
     // Renderizar as peças ao carregar
     renderClothes();
