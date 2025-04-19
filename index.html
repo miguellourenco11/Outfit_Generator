@@ -8,7 +8,7 @@
   
   <!-- Incluindo a fonte Montserrat Bold do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
@@ -113,6 +113,7 @@
     .minimized {
       display: none;
     }
+
     .minimize-button {
       background-color: #4e3621;
       color: white;
@@ -127,6 +128,24 @@
     }
     .minimize-button:hover {
       background-color: #3c2a19;
+    }
+
+    /* Estilos para o título e seta */
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.5rem;
+      color: #4e3621;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .arrow {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+    .arrow.up {
+      transform: rotate(180deg);
     }
   </style>
 </head>
@@ -162,12 +181,14 @@
       <button onclick="addClothingItem()">Adicionar peça</button>
     </div>
 
-    <h2>Minhas peças</h2>
-    <!-- Seção de peças que pode ser minimizada -->
-    <div class="outfit-section" id="clothesList"></div>
+    <!-- Título com a seta -->
+    <div class="section-title" onclick="toggleMinimize()">
+      <span>Minhas peças</span>
+      <span class="arrow" id="arrow">&#9660;</span> <!-- Seta para baixo -->
+    </div>
 
-    <!-- Botão de minimizar -->
-    <button class="minimize-button" onclick="toggleMinimize()">Minimizar/Expandir Peças</button>
+    <!-- Seção de peças -->
+    <div class="outfit-section" id="clothesList"></div>
 
     <button onclick="exportToJSON()">Atualizar ficheiro JSON</button>
 
@@ -295,7 +316,9 @@
     // Função para minimizar ou expandir a seção de peças
     const toggleMinimize = () => {
       const clothesList = document.getElementById("clothesList");
+      const arrow = document.getElementById("arrow");
       clothesList.classList.toggle('minimized');
+      arrow.classList.toggle('up');
     };
   </script>
 </body>
