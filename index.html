@@ -12,6 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
+    /* Estilo do corpo e dos componentes */
     body {
       font-family: 'Montserrat', sans-serif;
       background-color: #F7F7F7;
@@ -70,12 +71,6 @@
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      transition: max-height 0.3s ease;
-      overflow: hidden;
-      max-height: 300px; /* Tamanho padrão da peça */
-    }
-    .item-card.minimized {
-      max-height: 50px; /* Quando minimizado, ocupa menos espaço */
     }
     .item-card img {
       max-width: 100%;
@@ -113,6 +108,26 @@
       gap: 20px;
       margin-top: 20px;
     }
+
+    /* Classe para esconder as peças */
+    .minimized {
+      display: none;
+    }
+    .minimize-button {
+      background-color: #4e3621;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 700;
+      margin-top: 20px;
+    }
+    .minimize-button:hover {
+      background-color: #3c2a19;
+    }
   </style>
 </head>
 <body>
@@ -148,7 +163,11 @@
     </div>
 
     <h2>Minhas peças</h2>
+    <!-- Seção de peças que pode ser minimizada -->
     <div class="outfit-section" id="clothesList"></div>
+
+    <!-- Botão de minimizar -->
+    <button class="minimize-button" onclick="toggleMinimize()">Minimizar/Expandir Peças</button>
 
     <button onclick="exportToJSON()">Atualizar ficheiro JSON</button>
 
@@ -216,7 +235,6 @@
           <img src="${item.image}" alt="${item.name}">
           <p>${item.name}</p>
           <button onclick="removeClothingItem(${index})">Remover</button>
-          <button onclick="toggleMinimize(${index})">Minimizar</button>
         `;
         clothesList.appendChild(card);
       });
@@ -226,11 +244,6 @@
       clothes.splice(index, 1);
       renderClothes();
       updateClothesJSON();
-    };
-
-    const toggleMinimize = (index) => {
-      const card = document.getElementsByClassName('item-card')[index];
-      card.classList.toggle('minimized');
     };
 
     const updateClothesJSON = () => {
@@ -250,6 +263,7 @@
         (item.styles.includes(outfitStyle) || outfitStyle !== 'surpresa')
       );
 
+      // Se "surpresa" for selecionado, escolher um estilo aleatório
       if (outfitStyle === 'surpresa') {
         const stylesArray = ['streetwear', 'formal', 'casual'];
         const randomStyle = stylesArray[Math.floor(Math.random() * stylesArray.length)];
@@ -276,6 +290,12 @@
 
     const exportToJSON = () => {
       updateClothesJSON();
+    };
+
+    // Função para minimizar ou expandir a seção de peças
+    const toggleMinimize = () => {
+      const clothesList = document.getElementById("clothesList");
+      clothesList.classList.toggle('minimized');
     };
   </script>
 </body>
