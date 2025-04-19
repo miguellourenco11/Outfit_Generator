@@ -111,11 +111,6 @@
   <div class="container">
     <h1>Gerador de Outfit</h1>
 
-    <!-- Formulário de link manual -->
-    <div>
-      <input type="text" id="linkInput" placeholder="Cole o link do produto" />
-    </div>
-
     <div>
       <input type="text" id="nameInput" placeholder="Nome da peça" />
       <input type="text" id="imageInput" placeholder="URL da imagem" />
@@ -202,7 +197,6 @@
         card.innerHTML = `
           <img src="${item.image}" alt="${item.name}">
           <p>${item.name}</p>
-          <a href="${item.link}" target="_blank">Ver na loja</a>
           <button onclick="removeClothingItem(${index})">Remover</button>
         `;
         clothesList.appendChild(card);
@@ -253,7 +247,7 @@
       const ws = XLSX.utils.json_to_sheet(clothes);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Peças');
-      XLSX.writeFile(wb, 'outfit_gerador.xlsx');
+      XLSX.writeFile(wb, 'clothes.xlsx');
     };
 
     // Renderizar as peças ao carregar
