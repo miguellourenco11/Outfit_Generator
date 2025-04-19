@@ -2,11 +2,168 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gerador de Outfit</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 2rem; background: #f8f8f8; }
+    h1 { text-align: center; }
+    input, select, button { padding: 8px; margin: 4px 0; width: 100%; }
+    .container { max-width: 800px; margin: auto; }
+    .form-group { margin-bottom: 1rem; }
+    .checkboxes { display: flex; gap: 10px; flex-wrap: wrap; }
+    .item-card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px #ccc; margin-bottom: 1rem; }
+    .item-card img { width: 100%; height: 200px; object-fit: cover; }
+    .outfit { display: grid; gap: 1rem; }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script src="generator.js" type="module"></script>
+  <div class="container">
+    <h1>Gerador de Outfit</h1>
+
+    <div class="form-group">
+      <input id="link" placeholder="Link do produto" />
+      <button onclick="autofillFromLink()">Preencher do Link</button>
+    </div>
+
+    <div class="form-group">
+      <input id="name" placeholder="Nome da peça" />
+      <input id="image" placeholder="URL da imagem" />
+      <select id="type">
+        <option value="">Tipo</option>
+        <option value="tshirt">Tshirt</option>
+        <option value="camisola">Camisola</option>
+        <option value="casaco">Casaco</option>
+        <option value="calcas">Calças</option>
+        <option value="sapatos">Sapatos</option>
+        <option value="chapeu">Chapéu</option>
+        <option value="acessorio">Acessório</option>
+      </select>
+      <select id="season">
+        <option value="">Estação</option>
+        <option value="verao">Verão</option>
+        <option value="inverno">Inverno</option>
+      </select>
+    </div>
+
+    <div class="form-group checkboxes" id="style-checkboxes">
+      <!-- estilos são inseridos via JS -->
+    </div>
+
+    <button onclick="addItem()">Adicionar Peça</button>
+    <hr />
+
+    <h2>Minhas Peças</h2>
+    <div id="clothes-list"></div>
+
+    <h2>Gerar Outfit</h2>
+    <select id="season-filter">
+      <option value="verao">Verão</option>
+      <option value="inverno">Inverno</option>
+    </select>
+    <button onclick="generateOutfit()">Criar Outfit</button>
+
+    <div id="outfit" class="outfit"></div>
+  </div>
+
+  <script>
+    const clothes = JSON.parse(localStorage.getItem("clothes") || "[]");
+    const stylesList = ['casual', 'street', 'formal', 'minimal'];
+
+    function updateClothesList() {
+      const container = document.getElementById("clothes-list");
+      container.innerHTML = "";
+      clothes.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+        card.innerHTML = `
+          <img src="${item.image}" />
+          <h4>${item.name}</h4>
+          <p>${item.type} • ${item.styles.join(", ")} • ${item.season}</p>
+          <a href="${item.link}" target="_blank">Ver na loja</a><br>
+          <button onclick="removeItem(${index})">Remover</button>
+        `;
+        container.appendChild(card);
+      });
+      localStorage.setItem("clothes", JSON.stringify(clothes));
+    }
+
+    function removeItem(index) {
+      clothes.splice(index, 1);
+      updateClothesList();
+    }
+
+    function addItem() {
+      const name = document.getElementById("name").value;
+      const image = document.getElementById("image").value;
+      const link = document.getElementById("link").value;
+      const type = document.getElementById("type").value;
+      const season = document.getElementById("season").value;
+      const styles = Array.from(document.querySelectorAll('input[name="style"]:checked')).map(cb => cb.value);
+      if (!name || !image || !type || !season || styles.length === 0) return alert("Preenche todos os campos");
+
+      clothes.push({ name, image, link, type, styles, season });
+      updateClothesList();
+
+      document.getElementById("name").value = "";
+      document.getElementById("image").value = "";
+      document.getElementById("link").value = "";
+      document.getElementById("type").value = "";
+      document.getElementById("season").value = "";
+      document.querySelectorAll('input[name="style"]').forEach(cb => cb.checked = false);
+    }
+
+    function autofillFromLink() {
+      const url = document.getElementById("link").value;
+      if (!url.startsWith("http")) return alert("Link inválido");
+
+      // Placeholder de demonstração
+      document.getElementById("name").value = "Peça genérica";
+      document.getElementById("image").value = "https://via.placeholder.com/300x300.png?text=Imagem";
+    }
+
+    function generateOutfit() {
+      const season = document.getElementById("season-filter").value;
+      const filtered = clothes.filter(c => c.season === season);
+      const required = ["tshirt", "camisola", "calcas", "sapatos"];
+      const optional = ["casaco", "chapeu", "acessorio"];
+      const outfit = [];
+
+      for (let type of required) {
+        const item = filtered.find(c => c.type === type);
+        if (item) outfit.push(item);
+      }
+
+      for (let type of optional) {
+        const item = filtered.find(c => c.type === type);
+        if (item) outfit.push(item);
+      }
+
+      const container = document.getElementById("outfit");
+      container.innerHTML = "";
+      outfit.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item-card";
+        div.innerHTML = `
+          <img src="${item.image}" />
+          <h4>${item.name}</h4>
+          <p>${item.type} • ${item.styles.join(", ")} • ${item.season}</p>
+          <a href="${item.link}" target="_blank">Ver na loja</a>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function setupStyleCheckboxes() {
+      const container = document.getElementById("style-checkboxes");
+      stylesList.forEach(style => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" name="style" value="${style}"/> ${style}`;
+        container.appendChild(label);
+      });
+    }
+
+    setupStyleCheckboxes();
+    updateClothesList();
+  </script>
 </body>
 </html>
