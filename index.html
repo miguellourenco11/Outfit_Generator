@@ -5,14 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerador de Outfit</title>
   <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/2/28/Logo_Pull_%26_Bear_2020.svg" type="image/png">
-  
-  <!-- Incluindo a fonte Montserrat Bold do Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
-    /* Estilo do corpo e dos componentes */
     body {
       font-family: 'Montserrat', sans-serif;
       background-color: #F7F7F7;
@@ -35,7 +31,7 @@
     h1 {
       text-align: center;
       font-size: 2rem;
-      color: #4e3621; /* Castanho escuro */
+      color: #4e3621;
       margin-bottom: 20px;
       font-weight: 700;
     }
@@ -47,7 +43,7 @@
       border-radius: 8px;
       font-size: 1rem;
       box-sizing: border-box;
-      font-weight: 700; /* Montserrat Bold nos inputs */
+      font-weight: 700;
       transition: all 0.3s ease;
     }
     input:focus, select:focus {
@@ -55,7 +51,7 @@
       box-shadow: 0 0 5px rgba(78, 54, 33, 0.3);
     }
     button {
-      background-color: #4e3621; /* Castanho escuro */
+      background-color: #4e3621;
       color: white;
       border: none;
       padding: 15px;
@@ -63,12 +59,12 @@
       border-radius: 8px;
       cursor: pointer;
       width: 100%;
-      font-weight: 700; /* Montserrat Bold nos botões */
-      transition: background-color 0.3s ease;
+      font-weight: 700;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     button:hover {
+      background-color: #e8dbc8;
       color: #4e3621;
-      background-color: #eac8a4;
     }
     .item-card {
       display: flex;
@@ -87,9 +83,11 @@
       transform: translateY(0);
     }
     .item-card img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
     .item-card p {
       margin-top: 10px;
       font-size: 0.9rem;
@@ -105,51 +103,33 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
-      transition: max-height 0.3s ease;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
       overflow: hidden;
     }
-    .checkboxes {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .checkboxes label {
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-    }
+   .checkboxes {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 10px 0;
+}
+
+.checkboxes label {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaço entre caixa e texto */
+}
     .question-section {
       display: flex;
       justify-content: space-between;
       gap: 20px;
       margin-top: 20px;
     }
-
-    /* Classe para esconder as peças */
     .minimized {
-      max-height: 0;
+      max-height: 0 !important;
+      opacity: 0;
       padding: 0;
-      overflow: hidden;
     }
-
-    .minimize-button {
-      background-color: #4e3621;
-      color: white;
-      border: none;
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: 700;
-      margin-top: 20px;
-      transition: background-color 0.5s ease;
-    }
-    .minimize-button:hover {
-      background-color: #3c2a19;
-    }
-
-    /* Estilos para o título e seta */
     .section-title {
       display: flex;
       align-items: center;
@@ -175,7 +155,6 @@
 <body>
   <div class="container">
     <h1>Gerador de Outfit</h1>
-
     <div>
       <input type="text" id="nameInput" placeholder="Nome da peça" />
       <input type="text" id="imageInput" placeholder="URL da imagem" />
@@ -194,61 +173,44 @@
         <option value="inverno">Inverno</option>
         <option value="uniestacao">Uniestação (Verão & Inverno)</option>
       </select>
-      
       <div class="checkboxes">
-        <label><input type="checkbox" value="streetwear" id="styleStreet"> Streetwear</label>
         <label><input type="checkbox" value="formal" id="styleFormal"> Formal</label>
         <label><input type="checkbox" value="casual" id="styleCasual"> Casual</label>
       </div>
-
       <button onclick="addClothingItem()">Adicionar peça</button>
     </div>
-
-    <!-- Título com a seta -->
     <div class="section-title" onclick="toggleMinimize()">
       <span>Minhas peças</span>
-      <span class="arrow" id="arrow">&#9660;</span> <!-- Seta para baixo -->
+      <span class="arrow" id="arrow">&#9660;</span>
     </div>
-
-    <!-- Seção de peças -->
     <div class="outfit-section" id="clothesList"></div>
-
     <button onclick="exportToJSON()">Atualizar ficheiro JSON</button>
-
     <div class="question-section">
       <select id="outfitSeasonInput">
         <option value="verao">Verão</option>
         <option value="inverno">Inverno</option>
       </select>
       <select id="outfitStyleInput">
-        <option value="streetwear">Streetwear</option>
         <option value="formal">Formal</option>
         <option value="casual">Casual</option>
-        <option value="surpresa">Surpresa</option> <!-- Estilo surpresa ao sugerir outfit -->
+        <option value="surpresa">Surpresa</option>
       </select>
     </div>
-
     <div>
       <button onclick="generateOutfit()">Sugerir Outfit</button>
     </div>
-
     <h2>Outfit Sugerido</h2>
     <div class="outfit-section" id="outfitList"></div>
   </div>
-
   <script>
     let clothes = [];
-
-    // Carregar o JSON de "clothes.json" ao abrir a página
     fetch('clothes.json')
       .then(response => response.json())
       .then(data => {
         clothes = data;
         renderClothes();
       })
-      .catch(error => {
-        console.error("Erro ao carregar clothes.json:", error);
-      });
+      .catch(error => console.error("Erro ao carregar clothes.json:", error));
 
     const addClothingItem = () => {
       const name = document.getElementById("nameInput").value;
@@ -256,13 +218,11 @@
       const type = document.getElementById("typeInput").value;
       const season = document.getElementById("seasonInput").value;
       const styles = [];
-      if (document.getElementById("styleStreet").checked) styles.push('streetwear');
       if (document.getElementById("styleFormal").checked) styles.push('formal');
       if (document.getElementById("styleCasual").checked) styles.push('casual');
 
       if (name && image && type && season && styles.length > 0) {
-        const newItem = { name, image, type, season, styles };
-        clothes.push(newItem);
+        clothes.push({ name, image, type, season, styles });
         renderClothes();
         updateClothesJSON();
       }
@@ -271,21 +231,19 @@
     const renderClothes = () => {
       const clothesList = document.getElementById("clothesList");
       clothesList.innerHTML = '';
-      
       clothes.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'item-card';
         card.innerHTML = `
           <img src="${item.image}" alt="${item.name}">
           <p>${item.name}</p>
-          <button onclick="removeClothingItem(${index})">Remover</button>
-        `;
+          <button onclick="removeClothingItem(${index})">Remover</button>`;
         clothesList.appendChild(card);
-        setTimeout(() => card.classList.add('show'), 100); // Adiciona animação de fade-in
+        setTimeout(() => card.classList.add('show'), 100);
       });
     };
 
-    const removeClothingItem = (index) => {
+    const removeClothingItem = index => {
       clothes.splice(index, 1);
       renderClothes();
       updateClothesJSON();
@@ -302,42 +260,33 @@
     const generateOutfit = () => {
       const outfitSeason = document.getElementById("outfitSeasonInput").value;
       const outfitStyle = document.getElementById("outfitStyleInput").value;
-
       let selectedItems = clothes.filter(item =>
         (item.season === outfitSeason || item.season === 'uniestacao') &&
         (item.styles.includes(outfitStyle) || outfitStyle !== 'surpresa')
       );
-
-      // Se "surpresa" for selecionado, escolher um estilo aleatório
       if (outfitStyle === 'surpresa') {
-        const stylesArray = ['streetwear', 'formal', 'casual'];
+        const stylesArray = ['formal', 'casual'];
         const randomStyle = stylesArray[Math.floor(Math.random() * stylesArray.length)];
         selectedItems = clothes.filter(item =>
           (item.season === outfitSeason || item.season === 'uniestacao') &&
           item.styles.includes(randomStyle)
         );
       }
-
       const outfitList = document.getElementById("outfitList");
       outfitList.innerHTML = '';
-
       selectedItems.forEach(item => {
         const card = document.createElement('div');
         card.className = 'item-card';
         card.innerHTML = `
           <img src="${item.image}" alt="${item.name}">
           <p>${item.name}</p>
-          <a href="${item.link}" target="_blank">Ver na loja</a>
-        `;
+          <a href="${item.link}" target="_blank">Ver na loja</a>`;
         outfitList.appendChild(card);
       });
     };
 
-    const exportToJSON = () => {
-      updateClothesJSON();
-    };
+    const exportToJSON = () => updateClothesJSON();
 
-    // Função para minimizar ou expandir a seção de peças
     const toggleMinimize = () => {
       const clothesList = document.getElementById("clothesList");
       const arrow = document.getElementById("arrow");
