@@ -26,5 +26,188 @@
     "styles": [
       "casual"
     ]
+  },
+  {
+    "name": "Calças de Ganga 'Loose'",
+    "image": "https://mo-online.com/on/demandware.static/-/Sites-master-catalog/default/dw4e836381/images/hires/d5c479be-9914-4bbb-85dc-352cab72a877.jpg",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "formal",
+      "casual"
+    ]
+  },
+  {
+    "name": "Calças de Ganga 'Loose'",
+    "image": "https://mo-online.com/on/demandware.static/-/Sites-master-catalog/default/dw4e836381/images/hires/d5c479be-9914-4bbb-85dc-352cab72a877.jpg",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Calças de Ganga 'Loose'",
+    "image": "https://mo-online.com/on/demandware.static/-/Sites-master-catalog/default/dw4e836381/images/hires/d5c479be-9914-4bbb-85dc-352cab72a877.jpg",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Nike Dri-FIT Club",
+    "image": "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/bb35906a-3643-4577-95d7-0650a0618e8a/U+NK+DF+CLUB+CAP+U+CB+MTSWSH+L.png",
+    "type": "chapeu",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Gorro de malha",
+    "image": "https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw578234c4/images/hi-res/P_722056301D1.jpg?sw=800&sh=1200&sm=fit&q=90",
+    "type": "chapeu",
+    "season": "inverno",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Smash 3.0 Sneakers",
+    "image": "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_550,h_550/global/390984/01/fnd/EEA/fmt/png/Smash-3.0-Sneakers",
+    "type": "sapatos",
+    "season": "uniestacao",
+    "styles": [
+      "formal",
+      "casual"
+    ]
+  },
+  {
+    "name": "Ténis Old Skool",
+    "image": "https://assets.vans.eu/images/t_img/c_fill,g_center,f_auto,h_815,w_652,e_unsharp_mask:100/dpr_2.0/v1741624995/VN000D3HY28-ALT2/Old-Skool-Shoes.png",
+    "type": "sapatos",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Mocassin",
+    "image": "https://static.zara.net/assets/public/6d8b/934d/b0084fecb61b/51ceb62d1967/12413520002-e2/12413520002-e2.jpg?ts=1736770539527&w=1024",
+    "type": "sapatos",
+    "season": "uniestacao",
+    "styles": [
+      "formal",
+      "casual"
+    ]
+  },
+  {
+    "name": "Jeans baggy",
+    "image": "https://static.pullandbear.net/assets/public/6cd7/6d27/049749f1adc2/ea74c7bec4f7/07685526400-A6M/07685526400-A6M.jpg?ts=1721746666482&w=1078&f=auto",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Jeans baggy",
+    "image": "https://static.pullandbear.net/assets/public/7c37/4fe4/017044b88c6f/0af5ae4ce435/03687512434-A6M/03687512434-A6M.jpg?ts=1739875456653&w=1078&f=auto",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Trashy Jeans",
+    "image": "https://d30o7qbghf97ws.cloudfront.net/itemimage/4764561/image/standard-aeffec01c764ac04277d6fcda93b5dbf.jpg",
+    "type": "calcas",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "1997-98 FC Porto Home",
+    "image": "https://www.futgy.com/cdn/shop/files/46_ad606db0-9ae1-4b39-8fac-7b342bdce416.png?v=1735670924&width=1080",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "1988 Brazil Home Kit",
+    "image": "https://www.futgy.com/cdn/shop/files/6_6342bb44-ac18-4b45-b517-2558e930494a.png?v=1735671647&width=1080",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "FC Porto Kit",
+    "image": "https://i.ebayimg.com/thumbs/images/g/~bUAAOSwvRRj4RX7/s-l1200.jpg",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "24/25 Porto Kit",
+    "image": "https://store.fcporto.pt/media/catalog/product/cache/d590345896f9dc3e8dca52d00b38cb35/0/1/012400121999_01.png",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "24/25 United Kit",
+    "image": "https://images.footballfanatics.com/manchester-united/manchester-united-adidas-home-shirt-2024-25_ss5_p-200954451+pv-1+u-6ibxn1aqqasykftc5p27+v-kxr4xseebuuir4fyulus.jpg?_hv=2&w=900",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "06/07 Milan Kit",
+    "image": "https://gameday.pt/cdn/shop/files/05ddc32b.jpg?v=1694131108&width=1946",
+    "type": "tshirt",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "24/25 Portugal Kit",
+    "image": "https://www.futebolreligiao.com.br/image/cache/catalog/Portugal/Camisa%20II%20Sele%C3%A7%C3%A3o%20de%20Portugal%202024%20Away-900x900.jpg",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "Portugal Shirt",
+    "image": "https://m.media-amazon.com/images/I/61itCCLxDGL._AC_SX466_.jpg",
+    "type": "tshirt",
+    "season": "uniestacao",
+    "styles": [
+      "casual"
+    ]
+  },
+  {
+    "name": "01/02 Ajax Kit",
+    "image": "https://i.ebayimg.com/images/g/n-AAAOSwUjtnQ9MC/s-l1200.jpg",
+    "type": "tshirt",
+    "season": "verao",
+    "styles": [
+      "casual"
+    ]
   }
 ]
